@@ -9,13 +9,14 @@ import * as ROUTES from '../../constants/routes'
 const withAuthorization = condition => PassedComponent => {
   class WithAuthorization extends Component {
     componentDidMount() {
-      this.listener = this.props.firebase.auth.onAuthStateChanged(
+      this.listener = this.props.firebase.onAuthUserListener(
         authUser => {
           if (!condition(authUser)) {
-            this.props.history.push(ROUTES.SIGN_IN)
+            this.props.history.push(ROUTES.SIGN_IN);
           }
         },
-      )
+        () => this.props.history.push(ROUTES.SIGN_IN),
+      );
     }
 
     componentWillUnmount() {

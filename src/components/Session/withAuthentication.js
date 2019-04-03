@@ -1,30 +1,31 @@
-import React, { Component } from 'react';
+import React, { Component } from 'react'
 
 import AuthUserContext from './context'
-import { withFirebase } from '../Firebase';
+import { withFirebase } from '../Firebase'
 
 const withAuthentication = PassedComponent => {
   class WithAuthentication extends Component {
     constructor(props) {
-      super(props);
+      super(props)
 
       this.state = {
         authUser: null,
-      };
+      }
     }
 
     componentDidMount() {
-      this.listener = this.props.firebase.auth.onAuthStateChanged(
+      this.listener = this.props.firebase.onAuthUserListener(
         authUser => {
-          authUser
-            ? this.setState({ authUser })
-            : this.setState({ authUser: null });
+          this.setState({ authUser })
         },
-      );
+        () => {
+          this.setState({ authUser: null })
+        },
+      )
     }
 
     componentWillUnmount() {
-      this.listener();
+      this.listener()
     }
 
     render() {
@@ -32,11 +33,11 @@ const withAuthentication = PassedComponent => {
         <AuthUserContext.Provider value={this.state.authUser}>
           <PassedComponent {...this.props} />
         </AuthUserContext.Provider>
-      );
+      )
     }
   }
 
-  return withFirebase(WithAuthentication);
-};
+  return withFirebase(WithAuthentication)
+}
 
 export default withAuthentication
